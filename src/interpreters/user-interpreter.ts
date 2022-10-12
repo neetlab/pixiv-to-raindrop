@@ -36,6 +36,7 @@ export class UserInterpreter {
       this._logger.log(
         `${pageNum}th page. ${bookmarks.length} bookmarks found`
       );
+      return bookmarks;
     } finally {
       await page.close();
     }
@@ -50,9 +51,8 @@ export class UserInterpreter {
     );
 
     const links = pathnames.map((pathname) => {
-      const url = new URL(page.url());
-      url.pathname = pathname;
-      return url.href;
+      const artworkUrl = new URL(pathname, page.url());
+      return artworkUrl.href;
     });
 
     return links;

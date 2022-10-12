@@ -26,11 +26,11 @@ export abstract class BaseConfig implements IConfig {
     this.pixiv = {
       userId: nonNull(properties.pixiv?.userId, "pixiv.userId can't be null"),
       username: nonNull(
-        properties.pixiv?.userId,
+        properties.pixiv?.username,
         "pixiv.username can't be null"
       ),
       password: nonNull(
-        properties.pixiv?.userId,
+        properties.pixiv?.password,
         "pixiv.password can't be null"
       ),
     };

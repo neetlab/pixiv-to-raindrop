@@ -1,12 +1,11 @@
-import FormData from "form-data";
 import { launch } from "puppeteer";
-import { RaindropClient } from "./raindrop/api";
-import { raindrop } from "./raindrop/schemas";
 import { inject, injectable } from "inversify";
 import { TYPES } from "./types";
 import { ILogger } from "./logger/logger";
 import { IConfig } from "./config/config";
 import { ConfiguredInterpreter, Interpreter } from "./interpreters/interpreter";
+import { IRaindropClient } from "./raindrop/raindrop";
+import { RaindropClientAxios } from "./raindrop/raindrop-axios";
 
 interface HandleBookmarksResult {
   readonly hasMore: boolean;
@@ -14,19 +13,20 @@ interface HandleBookmarksResult {
 
 @injectable()
 export class Driver {
+  private readonly _raindrop: IRaindropClient;
+
   public constructor(
     @inject(Interpreter)
     private readonly _interpreter: Interpreter,
-
-    @inject(TYPES.RaindropClient)
-    private readonly _raindrop: RaindropClient,
 
     @inject(TYPES.Logger)
     private readonly _logger: ILogger,
 
     @inject(TYPES.Config)
     private readonly _config: IConfig
-  ) {}
+  ) {
+    this._raindrop = new RaindropClientAxios(this._config.raindrop.token);
+  }
 
   public async synchronize() {
     const browser = await launch({
@@ -45,14 +45,12 @@ export class Driver {
       let page = 1;
       while (true) {
         const bookmarks = await pixiv.fetchBookmarks(page);
-        if (bookmarks == null) {
-          break;
-        }
+        if (bookmarks == null) break;
 
-        const done = await this._handleBookmarks(pixiv, bookmarks);
+        const result = await this._handleBookmarks(pixiv, bookmarks);
+        this._logger.log(`Got hasMore=${result.hasMore} as a result`);
 
-        this._logger.log(`Got ${done} as result`);
-        if (done) break;
+        if (!result.hasMore) break;
         page += 1;
       }
 
@@ -68,10 +66,10 @@ export class Driver {
     pixiv: ConfiguredInterpreter,
     rawArtworkUrls: string[]
   ): Promise<HandleBookmarksResult> {
-    const exists = await this._raindrop.post<raindrop.v1._import.url.exists>(
-      "/rest/v1/import/url/exists",
-      { urls: rawArtworkUrls }
-    );
+    const exists = await this._raindrop.checkUrlExistence({
+      urls: rawArtworkUrls,
+    });
+
     const duplicates = exists.duplicates.map((duplicate) => duplicate.link);
     const artworkUrls = rawArtworkUrls.filter(
       (bookmark) => !duplicates.includes(bookmark)
@@ -80,11 +78,12 @@ export class Driver {
     this._logger.log(`New bookmarks were ${artworkUrls.length}`);
 
     for (const artworkUrl of artworkUrls) {
-      this._handleBookmark(pixiv, artworkUrl);
+      await this._handleBookmark(pixiv, artworkUrl);
     }
 
     return {
-      hasMore: artworkUrls.length > 0,
+      // No duplicates?
+      hasMore: artworkUrls.length === rawArtworkUrls.length,
     };
   }
 
@@ -94,30 +93,24 @@ export class Driver {
   ): Promise<void> {
     const artwork = await pixiv.fetchArtwork(artworkUrl);
 
-    const { item } = await this._raindrop.post<{ item: { _id: number } }>(
-      "/rest/v1/raindrop",
-      {
-        pleaseParse: {},
-        link: artwork.url,
-        type: "image",
-        title: artwork.title,
-        excerpt: artwork.description,
-        tags: this._config.raindrop.tags,
-        collection: {
-          $id: this._config.raindrop.collection,
-        },
-      }
-    );
+    const { item } = await this._raindrop.createRaindrop({
+      pleaseParse: {},
+      link: artwork.url,
+      type: "image",
+      title: artwork.title,
+      excerpt: artwork.description,
+      tags: this._config.raindrop.tags,
+      collection: {
+        $id: this._config.raindrop.collection,
+      },
+    });
 
     if (artwork.thumbnail == null) {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("cover", artwork.thumbnail);
-
-    await this._raindrop.put(`/rest/v1/raindrop/${item._id}/cover`, formData, {
-      headers: formData.getHeaders(),
+    await this._raindrop.uploadRaindropCover(item._id, {
+      cover: artwork.thumbnail,
     });
 
     this._logger.log(`${artwork.title} was saved.`);
