@@ -15,7 +15,7 @@ steps:
         "gcloud",
         "functions",
         "deploy",
-        "receive",
+        "pixiv-to-raindrop",
         "--entry-point=receive",
         "--runtime=nodejs18",
         "--trigger-http",
