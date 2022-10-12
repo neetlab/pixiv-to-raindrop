@@ -48,10 +48,7 @@ export abstract class BaseConfig implements IConfig {
     };
     this.logger = {
       type: properties.logger?.type ?? "stdout",
+      name: properties.logger?.name ?? "pixiv-to-raindrop",
     };
-  }
-
-  public print(): void {
-    console.info(JSON.stringify(this, null, 2));
   }
 }

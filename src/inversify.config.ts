@@ -20,7 +20,6 @@ export const getContainer = async (): Promise<Container> => {
     .toConstantValue(await ConfigEnv.create());
 
   const config = container.get<IConfig>(TYPES.Config);
-  config.print();
 
   container
     .bind<ICookieStorage>(TYPES.CookieStorage)

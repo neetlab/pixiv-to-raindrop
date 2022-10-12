@@ -29,6 +29,8 @@ export class Runner {
   }
 
   public async synchronize() {
+    this._logger.log(this._config);
+
     const browser = await launch({
       headless: true,
       args: ["--no-sandbox"],

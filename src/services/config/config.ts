@@ -21,6 +21,7 @@ export type LoggerType = "stdout" | "cloud-logging";
 
 export interface IConfigLogger {
   type: LoggerType;
+  name: string;
 }
 
 export interface IConfig {
@@ -28,5 +29,4 @@ export interface IConfig {
   raindrop: IConfigRaindrop;
   cookieStorage: IConfigCookieStorage;
   logger: IConfigLogger;
-  print(): void;
 }

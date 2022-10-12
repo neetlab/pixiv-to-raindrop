@@ -43,6 +43,7 @@ export class ConfigEnv extends BaseConfig implements IConfig {
       },
       logger: {
         type: env<LoggerType>("LOGGER_TYPE"),
+        name: env("LOGGER_NAME"),
       },
     };
 
