@@ -5,7 +5,7 @@ import { TYPES } from "../../../types";
 import { ILogger } from "../../logger/logger";
 import { ICookieStorage } from "../../storage/cookie-storage";
 
-const LOGIN_URL = new URL("https://accounts.pixiv.net/login");
+const LOGIN_URL = new URL("https://accounts.pixiv.net/login?lang=ja");
 
 export interface LoginParameters {
   readonly username: string;
@@ -54,16 +54,16 @@ export class LoginInterpreter {
     await page.goto(LOGIN_URL.href);
     const currentUrl = new URL(page.url());
 
-    if (currentUrl.href !== LOGIN_URL.href) {
+    if (currentUrl.pathname !== LOGIN_URL.pathname) {
       this._logger.log("Session found. Skipped...");
       return;
     }
 
-    await page.type('[placeholder="E-mail address or pixiv ID"]', username);
-    await page.type('[placeholder="Password"]', password);
+    await page.type('[placeholder="メールアドレスまたはpixiv ID"]', username);
+    await page.type('[placeholder="パスワード"]', password);
 
     await Promise.all([
-      page.click('aria/Login[role="button"]'),
+      page.click('aria/ログイン[role="button"]'),
       page.waitForNavigation(),
     ]);
     this._logger.log("Successfully logged into pixiv");
