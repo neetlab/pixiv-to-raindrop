@@ -1,11 +1,11 @@
 import { Container } from "inversify";
-import { IConfig } from "./config/config";
-import { ConfigEnv } from "./config/config-env";
-import { ILogger } from "./logger/logger";
-import { LoggerConsole } from "./logger/logger-console";
-import { IRaindropClient, RaindropClient } from "./raindrop/api";
-import { ICookieStorage } from "./storage/cookie-storage";
-import { CookieStorageFs } from "./storage/cookie-storage-fs";
+import { IConfig } from "./services/config/config";
+import { ConfigEnv } from "./services/config/config-env";
+import { ILogger } from "./services/logger/logger";
+import { LoggerConsole } from "./services/logger/logger-console";
+import { ICookieStorage } from "./services/storage/cookie-storage";
+import { CookieStorageFs } from "./services/storage/cookie-storage-fs";
+import { CookieStorageGcp } from "./services/storage/cookie-storage-gcp";
 import { TYPES } from "./types";
 
 export const getContainer = async (): Promise<Container> => {
@@ -27,11 +27,14 @@ export const getContainer = async (): Promise<Container> => {
     .when(() => config.cookieStorage.type === "filesystem");
 
   container
+    .bind<ICookieStorage>(TYPES.CookieStorage)
+    .to(CookieStorageGcp)
+    .when(() => config.cookieStorage.type === "cloud-storage");
+
+  container
     .bind<ILogger>(TYPES.Logger)
     .to(LoggerConsole)
     .when(() => config.logger.type === "stdout");
-
-  container.bind<IRaindropClient>(TYPES.RaindropClient).to(RaindropClient);
 
   return container;
 };

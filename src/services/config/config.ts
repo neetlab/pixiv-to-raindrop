@@ -14,6 +14,7 @@ export type CookieStorageType = "filesystem" | "cloud-storage";
 
 export interface IConfigCookieStorage {
   type: CookieStorageType;
+  bucket: string;
 }
 
 export type LoggerType = "stdout";

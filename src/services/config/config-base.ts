@@ -44,6 +44,7 @@ export abstract class BaseConfig implements IConfig {
     };
     this.cookieStorage = {
       type: properties.cookieStorage?.type ?? "filesystem",
+      bucket: properties.cookieStorage?.bucket ?? "pixiv-to-raindrop",
     };
     this.logger = {
       type: properties.logger?.type ?? "stdout",

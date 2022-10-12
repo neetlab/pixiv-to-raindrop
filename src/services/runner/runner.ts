@@ -1,18 +1,18 @@
 import { launch } from "puppeteer";
 import { inject, injectable } from "inversify";
-import { TYPES } from "./types";
-import { ILogger } from "./logger/logger";
-import { IConfig } from "./config/config";
+import { TYPES } from "../../types";
+import { ILogger } from "../logger/logger";
+import { IConfig } from "../config/config";
 import { ConfiguredInterpreter, Interpreter } from "./interpreters/interpreter";
-import { IRaindropClient } from "./raindrop/raindrop";
-import { RaindropClientAxios } from "./raindrop/raindrop-axios";
+import { IRaindropClient } from "../../libs/raindrop/raindrop";
+import { RaindropClientAxios } from "../../libs/raindrop/raindrop-axios";
 
 interface HandleBookmarksResult {
   readonly hasMore: boolean;
 }
 
 @injectable()
-export class Driver {
+export class Runner {
   private readonly _raindrop: IRaindropClient;
 
   public constructor(

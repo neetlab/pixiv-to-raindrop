@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
 import { Browser, Page } from "puppeteer";
-import { IConfig } from "../config/config";
-import { ILogger } from "../logger/logger";
-import { TYPES } from "../types";
+import { IConfig } from "../../config/config";
+import { ILogger } from "../../logger/logger";
+import { TYPES } from "../../../types";
 
 @injectable()
 export class UserInterpreter {

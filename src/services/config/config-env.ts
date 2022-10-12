@@ -39,6 +39,7 @@ export class ConfigEnv extends BaseConfig implements IConfig {
       },
       cookieStorage: {
         type: env<CookieStorageType>("COOKIE_STORAGE_TYPE"),
+        bucket: env("COOKIE_STORAGE_BUCKET"),
       },
       logger: {
         type: env<LoggerType>("LOGGER_TYPE"),

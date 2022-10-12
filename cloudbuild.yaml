@@ -16,7 +16,7 @@ steps:
         "functions",
         "deploy",
         "pixiv-to-raindrop",
-        "--entry-point=receive",
+        "--entry-point=synchronize",
         "--runtime=nodejs18",
         "--trigger-http",
         "--source=./dist",
