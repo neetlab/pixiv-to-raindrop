@@ -1,18 +1,19 @@
 import { inject, injectable } from "inversify";
 import { Browser, Page } from "puppeteer";
-import { IConfig } from "../../config/config";
 import { ILogger } from "../../logger/logger";
 import { ICookieStorage } from "../../storage/cookie-storage";
 import { TYPES } from "../../../types";
 
-const LOGIN_URL = "https://accounts.pixiv.net/login";
+const LOGIN_URL = new URL("https://accounts.pixiv.net/login");
+
+export interface LoginParameters {
+  username: string;
+  password: string;
+}
 
 @injectable()
 export class LoginInterpreter {
   public constructor(
-    @inject(TYPES.Config)
-    private readonly _config: IConfig,
-
     @inject(TYPES.CookieStorage)
     private readonly _storage: ICookieStorage,
 
@@ -20,31 +21,41 @@ export class LoginInterpreter {
     private readonly _logger: ILogger
   ) {}
 
-  async login(browser: Browser): Promise<void> {
+  async login(browser: Browser, parameters: LoginParameters): Promise<void> {
     const page = await browser.newPage();
 
     try {
       await this._restore(page);
-      await this._loginByPassword(page);
+
+      await this._loginByPassword(
+        page,
+        parameters.username,
+        parameters.password
+      );
+
       await this._save(page);
     } finally {
       await page.close();
     }
   }
 
-  private async _loginByPassword(page: Page) {
+  private async _loginByPassword(
+    page: Page,
+    username: string,
+    password: string
+  ) {
     this._logger.log("Logging into pixiv...");
-    await page.goto(LOGIN_URL);
-    if (page.url() !== LOGIN_URL) {
+    await page.goto(LOGIN_URL.href);
+    const currentUrl = new URL(page.url());
+
+    if (currentUrl.href !== LOGIN_URL.href) {
       this._logger.log("Session found. Skipped...");
       return;
     }
 
-    await page.type(
-      '[placeholder="E-mail address or pixiv ID"',
-      this._config.pixiv.username
-    );
-    await page.type('[placeholder="Password"', this._config.pixiv.password);
+    await page.type('[placeholder="E-mail address or pixiv ID"', username);
+    await page.type('[placeholder="Password"', password);
+
     await Promise.all([
       page.click('aria/Login[role="button"]'),
       page.waitForNavigation(),

@@ -1,11 +1,11 @@
 import { inject, injectable } from "inversify";
 import { Browser } from "puppeteer";
 import { Artwork, ArtworkInterpreter } from "./artwork-interpreter";
-import { LoginInterpreter } from "./login-interpreter";
+import { LoginInterpreter, LoginParameters } from "./login-interpreter";
 import { UserInterpreter } from "./user-interpreter";
 
 export interface ConfiguredInterpreter {
-  login(): Promise<void>;
+  login(parameters: LoginParameters): Promise<void>;
   fetchBookmarks(page: number): Promise<string[] | undefined>;
   fetchArtwork(url: string): Promise<Artwork>;
 }
@@ -26,7 +26,8 @@ export class Interpreter {
 
   public configure(browser: Browser): ConfiguredInterpreter {
     return {
-      login: () => this._loginInterpreter.login(browser),
+      login: (parameters: LoginParameters) =>
+        this._loginInterpreter.login(browser, parameters),
       fetchBookmarks: (page: number) =>
         this._userInterpreter.fetchBookmarks(browser, page),
       fetchArtwork: (url: string) =>

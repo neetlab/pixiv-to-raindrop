@@ -40,7 +40,10 @@ export class Runner {
     const pixiv = this._interpreter.configure(browser);
 
     try {
-      await pixiv.login();
+      await pixiv.login({
+        username: this._config.pixiv.username,
+        password: this._config.pixiv.password,
+      });
 
       let page = 1;
       while (true) {
