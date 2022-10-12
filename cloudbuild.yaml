@@ -19,6 +19,5 @@ steps:
         "--entry-point=synchronize",
         "--runtime=nodejs16",
         "--trigger-http",
-        "--allow-unauthenticated",
       ]
     dir: "./"
