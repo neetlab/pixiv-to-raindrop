@@ -3,7 +3,10 @@ ignorePaths: []
 dictionaryDefinitions: []
 dictionaries: []
 words:
+  - cloudsdktool
+  - gcloud
   - inversify
+  - neet
   - pixiv
 ignoreWords: []
 import: []

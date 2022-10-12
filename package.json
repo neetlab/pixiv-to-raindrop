@@ -1,5 +1,6 @@
 {
   "name": "pixiv-rss-bridge",
+  "packageManager": "yarn@3.2.4",
   "scripts": {
     "start": "functions-framework --target=synchronize",
     "build": "tsc"
@@ -19,6 +20,5 @@
   },
   "devDependencies": {
     "ts-node": "^10.9.1"
-  },
-  "packageManager": "yarn@3.2.4"
+  }
 }
