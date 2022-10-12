@@ -17,7 +17,7 @@ steps:
         "deploy",
         "pixiv-to-raindrop",
         "--entry-point=synchronize",
-        "--runtime=nodejs18",
+        "--runtime=nodejs16",
         "--trigger-http",
         "--source=./dist",
         "--allow-unauthenticated",
