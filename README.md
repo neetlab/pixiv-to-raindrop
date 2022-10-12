@@ -1,12 +1,13 @@
 # pixiv-to-raindrop
 
-A lambda function that automatically mirrors bookmarks from [Pixiv](https://pixiv.net) to [Raindrop.io](https://raindrop.io)
+A lambda function that executes automated mirroring of bookmarks from [Pixiv](https://pixiv.net) to [Raindrop.io](https://raindrop.io)
 
-## Usage
+## Demo
 
-```
-curl -g <URL>
-```
+- Source: https://www.pixiv.net/users/35829372/bookmarks/artworks
+- Targets
+  - HTML: https://raindrop.io/neet/a-24614249
+  - RSS: https://bg.raindrop.io/rss/public/24614249
 
 ## Configuration
 
