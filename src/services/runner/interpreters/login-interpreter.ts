@@ -53,8 +53,8 @@ export class LoginInterpreter {
       return;
     }
 
-    await page.type('[placeholder="E-mail address or pixiv ID"', username);
-    await page.type('[placeholder="Password"', password);
+    await page.type('[placeholder="E-mail address or pixiv ID"]', username);
+    await page.type('[placeholder="Password"]', password);
 
     await Promise.all([
       page.click('aria/Login[role="button"]'),

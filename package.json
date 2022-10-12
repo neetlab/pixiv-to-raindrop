@@ -1,9 +1,8 @@
 {
   "name": "pixiv-rss-bridge",
-  "packageManager": "yarn@3.2.3",
   "scripts": {
-    "start": "functions-framework --target=receive --source ./dist",
-    "build": "tsc && cp ./package.json ./dist/package.json"
+    "start": "functions-framework --target=synchronize",
+    "build": "tsc"
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^3.1.2",
@@ -20,5 +19,6 @@
   },
   "devDependencies": {
     "ts-node": "^10.9.1"
-  }
+  },
+  "packageManager": "yarn@3.2.4"
 }
