@@ -1,13 +1,16 @@
 import { inject, injectable } from "inversify";
-import { Browser } from "puppeteer";
-import { Artwork, ArtworkInterpreter } from "./artwork-interpreter";
-import { LoginInterpreter, LoginParameters } from "./login-interpreter";
+import type { Browser } from "puppeteer";
+
+import type { Artwork } from "./artwork-interpreter";
+import { ArtworkInterpreter } from "./artwork-interpreter";
+import type { LoginParameters } from "./login-interpreter";
+import { LoginInterpreter } from "./login-interpreter";
 import { UserInterpreter } from "./user-interpreter";
 
 export interface ConfiguredInterpreter {
-  login(parameters: LoginParameters): Promise<void>;
-  fetchBookmarks(page: number): Promise<string[] | undefined>;
-  fetchArtwork(url: string): Promise<Artwork>;
+  readonly login: (parameters: LoginParameters) => Promise<void>;
+  readonly fetchBookmarks: (page: number) => Promise<string[] | undefined>;
+  readonly fetchArtwork: (url: string) => Promise<Artwork>;
 }
 
 // Facade
@@ -24,13 +27,14 @@ export class Interpreter {
     private readonly _artworkInterpreter: ArtworkInterpreter
   ) {}
 
+  // eslint-disable-next-line @typescript-eslint/prefer-readonly-parameter-types
   public configure(browser: Browser): ConfiguredInterpreter {
     return {
-      login: (parameters: LoginParameters) =>
+      login: async (parameters: LoginParameters) =>
         this._loginInterpreter.login(browser, parameters),
-      fetchBookmarks: (page: number) =>
+      fetchBookmarks: async (page: number) =>
         this._userInterpreter.fetchBookmarks(browser, page),
-      fetchArtwork: (url: string) =>
+      fetchArtwork: async (url: string) =>
         this._artworkInterpreter.fetchArtwork(browser, url),
     };
   }

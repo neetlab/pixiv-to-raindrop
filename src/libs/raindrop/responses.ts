@@ -1,4 +1,4 @@
-import { IRaindrop } from "./schemas";
+import type { IRaindrop } from "./schemas";
 
 export interface CreateRaindropResponse {
   result: boolean;

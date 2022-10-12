@@ -7,12 +7,12 @@ export interface IRaindropMedia {
 }
 
 export type RaindropType =
-  | "link"
   | "article"
-  | "image"
-  | "video"
+  | "audio"
   | "document"
-  | "audio";
+  | "image"
+  | "link"
+  | "video";
 
 export interface IRaindropUser {
   $id: string;

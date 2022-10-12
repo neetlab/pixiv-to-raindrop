@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/prefer-readonly-parameter-types */
 import { inject, injectable } from "inversify";
-import { Browser, Page } from "puppeteer";
+import type { Browser, Page } from "puppeteer";
+
+import { TYPES } from "../../../types";
 import { IConfig } from "../../config/config";
 import { ILogger } from "../../logger/logger";
-import { TYPES } from "../../../types";
 
 @injectable()
 export class UserInterpreter {
@@ -16,12 +18,12 @@ export class UserInterpreter {
 
   public async fetchBookmarks(
     browser: Browser,
-    pageNum: number = 1
+    pageNumber = 1
   ): Promise<string[] | undefined> {
     const page = await browser.newPage();
 
     try {
-      const search = new URLSearchParams({ p: pageNum.toString() });
+      const search = new URLSearchParams({ p: pageNumber.toString() });
       await page.goto(
         `https://www.pixiv.net/users/${
           this._config.pixiv.userId
@@ -34,7 +36,7 @@ export class UserInterpreter {
       }
 
       this._logger.log(
-        `${pageNum}th page. ${bookmarks.length} bookmarks found`
+        `${pageNumber}th page. ${bookmarks.length} bookmarks found`
       );
       return bookmarks;
     } finally {

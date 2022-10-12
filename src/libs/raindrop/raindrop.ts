@@ -1,25 +1,25 @@
-import {
+import type {
   CheckUrlExistenceParameters,
   CreateRaindropParameters,
   UploadRaindropCoverParameters,
 } from "./request-bodies";
-import {
+import type {
   CheckUrlExistenceResponse,
   CreateRaindropResponse,
   UploadRaindropCoverResponse,
 } from "./responses";
 
 export interface IRaindropClient {
-  createRaindrop(
+  createRaindrop: (
     parameters: CreateRaindropParameters
-  ): Promise<CreateRaindropResponse>;
+  ) => Promise<CreateRaindropResponse>;
 
-  checkUrlExistence(
+  checkUrlExistence: (
     parameters: CheckUrlExistenceParameters
-  ): Promise<CheckUrlExistenceResponse>;
+  ) => Promise<CheckUrlExistenceResponse>;
 
-  uploadRaindropCover(
+  uploadRaindropCover: (
     id: number,
     parameters: UploadRaindropCoverParameters
-  ): Promise<UploadRaindropCoverResponse>;
+  ) => Promise<UploadRaindropCoverResponse>;
 }

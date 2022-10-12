@@ -1,15 +1,16 @@
 import "reflect-metadata";
-import { HttpFunction } from "@google-cloud/functions-framework";
+
+import type { HttpFunction } from "@google-cloud/functions-framework";
+
 import { getContainer } from "./inversify.config";
 import { Runner } from "./services/runner/runner";
 
-export const synchronize: HttpFunction = async (_req, res) => {
+export const synchronize: HttpFunction = async (_request, response) => {
   try {
     const container = await getContainer();
     await container.get(Runner).synchronize();
-    res.sendStatus(200);
-  } catch (e) {
-    console.error(e);
-    res.sendStatus(200);
+    response.sendStatus(200);
+  } catch {
+    response.sendStatus(200);
   }
 };

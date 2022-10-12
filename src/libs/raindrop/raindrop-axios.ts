@@ -1,13 +1,14 @@
 import FormData from "form-data";
-import { IHttp } from "../http/http";
+
+import type { IHttp } from "../http/http";
 import { HttpAxios } from "../http/http-axios";
-import { IRaindropClient } from "./raindrop";
-import {
+import type { IRaindropClient } from "./raindrop";
+import type {
   CheckUrlExistenceParameters,
   CreateRaindropParameters,
   UploadRaindropCoverParameters,
 } from "./request-bodies";
-import {
+import type {
   CheckUrlExistenceResponse,
   CreateRaindropResponse,
   UploadRaindropCoverResponse,
@@ -25,19 +26,19 @@ export class RaindropClientAxios implements IRaindropClient {
     });
   }
 
-  public createRaindrop(
+  public async createRaindrop(
     parameters: CreateRaindropParameters
   ): Promise<CreateRaindropResponse> {
     return this._http.post("/rest/v1/raindrop", parameters);
   }
 
-  public checkUrlExistence(
+  public async checkUrlExistence(
     parameters: CheckUrlExistenceParameters
   ): Promise<CheckUrlExistenceResponse> {
     return this._http.post("/rest/v1/import/url/exists", parameters);
   }
 
-  public uploadRaindropCover(
+  public async uploadRaindropCover(
     id: number,
     parameters: UploadRaindropCoverParameters
   ): Promise<UploadRaindropCoverResponse> {

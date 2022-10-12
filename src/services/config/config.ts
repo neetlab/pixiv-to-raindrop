@@ -1,32 +1,32 @@
 export interface IConfigPixiv {
-  userId: string;
-  username: string;
-  password: string;
+  readonly userId: string;
+  readonly username: string;
+  readonly password: string;
 }
 
 export interface IConfigRaindrop {
-  token: string;
-  collection?: number;
-  tags: string[];
+  readonly token: string;
+  readonly collection?: number;
+  readonly tags: readonly string[];
 }
 
-export type CookieStorageType = "filesystem" | "cloud-storage";
+export type CookieStorageType = "cloud-storage" | "filesystem";
 
 export interface IConfigCookieStorage {
-  type: CookieStorageType;
-  bucket: string;
+  readonly type: CookieStorageType;
+  readonly bucket: string;
 }
 
-export type LoggerType = "stdout" | "cloud-logging";
+export type LoggerType = "cloud-logging" | "stdout";
 
 export interface IConfigLogger {
-  type: LoggerType;
-  name: string;
+  readonly type: LoggerType;
+  readonly name: string;
 }
 
 export interface IConfig {
-  pixiv: IConfigPixiv;
-  raindrop: IConfigRaindrop;
-  cookieStorage: IConfigCookieStorage;
-  logger: IConfigLogger;
+  readonly pixiv: IConfigPixiv;
+  readonly raindrop: IConfigRaindrop;
+  readonly cookieStorage: IConfigCookieStorage;
+  readonly logger: IConfigLogger;
 }

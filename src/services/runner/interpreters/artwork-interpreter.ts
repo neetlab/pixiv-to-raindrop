@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/prefer-readonly-parameter-types */
 import { injectable } from "inversify";
-import { Browser, Page } from "puppeteer";
+import type { Browser, Page } from "puppeteer";
 
 export interface Artwork {
   url: string;

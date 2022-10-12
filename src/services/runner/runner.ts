@@ -1,11 +1,13 @@
-import { launch } from "puppeteer";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../../types";
-import { ILogger } from "../logger/logger";
-import { IConfig } from "../config/config";
-import { ConfiguredInterpreter, Interpreter } from "./interpreters/interpreter";
-import { IRaindropClient } from "../../libs/raindrop/raindrop";
+import { launch } from "puppeteer";
+
+import type { IRaindropClient } from "../../libs/raindrop/raindrop";
 import { RaindropClientAxios } from "../../libs/raindrop/raindrop-axios";
+import { TYPES } from "../../types";
+import { IConfig } from "../config/config";
+import { ILogger } from "../logger/logger";
+import type { ConfiguredInterpreter } from "./interpreters/interpreter";
+import { Interpreter } from "./interpreters/interpreter";
 
 interface HandleBookmarksResult {
   readonly hasMore: boolean;
@@ -28,7 +30,7 @@ export class Runner {
     this._raindrop = new RaindropClientAxios(this._config.raindrop.token);
   }
 
-  public async synchronize() {
+  public async synchronize(): Promise<void> {
     this._logger.log(this._config);
 
     const browser = await launch({
@@ -48,12 +50,13 @@ export class Runner {
       });
 
       let page = 1;
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, no-constant-condition
       while (true) {
         const bookmarks = await pixiv.fetchBookmarks(page);
         if (bookmarks == null) break;
 
         const result = await this._handleBookmarks(pixiv, bookmarks);
-        this._logger.log(`Got hasMore=${result.hasMore} as a result`);
+        this._logger.log(`Got hasMore=${String(result.hasMore)} as a result`);
 
         if (!result.hasMore) break;
         page += 1;
@@ -69,15 +72,17 @@ export class Runner {
 
   private async _handleBookmarks(
     pixiv: ConfiguredInterpreter,
-    rawArtworkUrls: string[]
+    rawArtworkUrls: readonly string[]
   ): Promise<HandleBookmarksResult> {
     const exists = await this._raindrop.checkUrlExistence({
       urls: rawArtworkUrls,
     });
 
-    const duplicates = exists.duplicates.map((duplicate) => duplicate.link);
+    const duplicates = new Set(
+      exists.duplicates.map((duplicate) => duplicate.link)
+    );
     const artworkUrls = rawArtworkUrls.filter(
-      (bookmark) => !duplicates.includes(bookmark)
+      (bookmark) => !duplicates.has(bookmark)
     );
 
     this._logger.log(`New bookmarks were ${artworkUrls.length}`);
@@ -118,6 +123,6 @@ export class Runner {
       cover: artwork.thumbnail,
     });
 
-    this._logger.log(`${artwork.title} was saved.`);
+    this._logger.log(`${artwork.title ?? "Untitled work"} was saved.`);
   }
 }

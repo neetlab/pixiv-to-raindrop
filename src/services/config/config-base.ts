@@ -1,5 +1,6 @@
-import { PartialDeep } from "type-fest";
-import {
+import type { PartialDeep } from "type-fest";
+
+import type {
   IConfig,
   IConfigCookieStorage,
   IConfigLogger,
@@ -17,10 +18,13 @@ const nonNull = <T>(value: T | null | undefined, message: string): T => {
 export type BaseConfigParameters = PartialDeep<IConfig>;
 
 export abstract class BaseConfig implements IConfig {
-  readonly pixiv: IConfigPixiv;
-  readonly raindrop: IConfigRaindrop;
-  readonly cookieStorage: IConfigCookieStorage;
-  readonly logger: IConfigLogger;
+  public readonly pixiv: IConfigPixiv;
+
+  public readonly raindrop: IConfigRaindrop;
+
+  public readonly cookieStorage: IConfigCookieStorage;
+
+  public readonly logger: IConfigLogger;
 
   protected constructor(properties: BaseConfigParameters) {
     this.pixiv = {

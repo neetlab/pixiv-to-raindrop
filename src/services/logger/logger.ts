@@ -1,4 +1,4 @@
 export interface ILogger {
-  log(...args: unknown[]): unknown;
-  error(...args: unknown[]): unknown;
+  readonly log: (...arguments_: readonly unknown[]) => unknown;
+  readonly error: (...arguments_: readonly unknown[]) => unknown;
 }

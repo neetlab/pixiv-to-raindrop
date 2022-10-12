@@ -1,18 +1,23 @@
-import path from "path";
-import fs from "fs/promises";
-import os from "os";
-import { inject, injectable } from "inversify";
-import { Storage, Bucket } from "@google-cloud/storage";
+/* eslint-disable @typescript-eslint/prefer-readonly-parameter-types */
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 
-import { IConfig } from "../config/config";
+import type { Bucket } from "@google-cloud/storage";
+import { Storage } from "@google-cloud/storage";
+import { inject, injectable } from "inversify";
+import type { Protocol } from "puppeteer";
+
 import { TYPES } from "../../types";
-import { ICookieStorage } from "./cookie-storage";
-import { Protocol } from "puppeteer";
+import { IConfig } from "../config/config";
+import type { ICookieStorage } from "./cookie-storage";
 
 @injectable()
 export class CookieStorageGcp implements ICookieStorage {
   private readonly _FILENAME = "cookies.json";
+
   private readonly _storage = new Storage();
+
   private readonly _bucket: Bucket;
 
   public constructor(
@@ -22,12 +27,14 @@ export class CookieStorageGcp implements ICookieStorage {
     this._bucket = this._storage.bucket(this._config.cookieStorage.bucket);
   }
 
-  async save(cookies: Protocol.Network.CookieParam[]): Promise<void> {
+  public async save(
+    cookies: readonly Protocol.Network.CookieParam[]
+  ): Promise<void> {
     const file = this._bucket.file(this._FILENAME);
     await file.save(JSON.stringify(cookies, null, 2));
   }
 
-  async read(): Promise<Protocol.Network.CookieParam[]> {
+  public async read(): Promise<Protocol.Network.CookieParam[]> {
     const file = this._bucket.file(this._FILENAME);
     const filePath = path.join(os.tmpdir(), this._FILENAME);
     const [exists] = await file.exists();
@@ -37,7 +44,7 @@ export class CookieStorageGcp implements ICookieStorage {
     }
 
     await file.download({ destination: filePath });
-    const json = await fs.readFile(filePath, "utf-8");
-    return JSON.parse(json);
+    const jsonBuffer = await fs.readFile(filePath);
+    return JSON.parse(jsonBuffer.toString()) as Protocol.Network.CookieParam[];
   }
 }
