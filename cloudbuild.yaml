@@ -1,10 +1,10 @@
 steps:
-  - name: node:18
+  - name: node:16
     entrypoint: yarn
     args: ["install"]
     dir: "./"
 
-  - name: node:18
+  - name: node:16
     entrypoint: yarn
     args: ["run", "build"]
     dir: "./"
@@ -16,6 +16,8 @@ steps:
         "functions",
         "deploy",
         "pixiv-to-raindrop",
+        "--gen2",
+        "--region=us-central1",
         "--entry-point=synchronize",
         "--runtime=nodejs16",
         "--trigger-http",
