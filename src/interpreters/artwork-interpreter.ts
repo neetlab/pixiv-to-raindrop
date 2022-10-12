@@ -1,3 +1,4 @@
+import { injectable } from "inversify";
 import { Browser, Page } from "puppeteer";
 
 export interface Artwork {
@@ -10,6 +11,7 @@ export interface Artwork {
 /**
  * 個別ページのパーサー
  */
+@injectable()
 export class ArtworkInterpreter {
   public async fetchArtwork(browser: Browser, url: string): Promise<Artwork> {
     const page = await browser.newPage();

@@ -30,7 +30,7 @@ export class Driver {
 
   public async synchronize() {
     const browser = await launch({
-      headless: false,
+      headless: true,
       args: ["--no-sandbox"],
       defaultViewport: {
         width: 1920,
