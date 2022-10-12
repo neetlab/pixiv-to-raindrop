@@ -1,51 +1,47 @@
+import { inject, injectable } from "inversify";
 import { Browser, Page } from "puppeteer";
+import { IConfig } from "../config/config";
 import { ILogger } from "../logger/logger";
+import { TYPES } from "../types";
 
-export interface User {
-  readonly bookmarks: string[];
-}
-
+@injectable()
 export class UserInterpreter {
   public constructor(
-    private readonly _browser: Browser,
-    private readonly _logger: ILogger
+    @inject(TYPES.Logger)
+    private readonly _logger: ILogger,
+
+    @inject(TYPES.Config)
+    private readonly _config: IConfig
   ) {}
 
-  public async *interpret(username: string): AsyncIterable<User> {
-    const page = await this._browser.newPage();
+  public async fetchBookmarks(
+    browser: Browser,
+    pageNum: number = 1
+  ): Promise<string[] | undefined> {
+    const page = await browser.newPage();
 
     try {
-      await page.goto(`https://pixiv.me/${username}`);
-      await page.waitForSelector("aria/ブックマーク[role='link']");
-      await Promise.all([
-        page.click("aria/ブックマーク[role='link']"),
-        page.waitForNavigation(),
-      ]);
-    } catch {
-      throw new Error("No bookmarks found");
-    }
+      const search = new URLSearchParams({ p: pageNum.toString() });
+      await page.goto(
+        `https://www.pixiv.net/users/${
+          this._config.pixiv.userId
+        }/bookmarks/artworks?${search.toString()}`
+      );
 
-    let index = 1;
-
-    while (true) {
-      const bookmarks = await this._fetchBookmarks(page);
+      const bookmarks = await this._findArtworkLinks(page);
       if (bookmarks.length === 0) {
-        break;
+        return;
       }
 
-      this._logger.log(`${index}th page. ${bookmarks.length} bookmarks found`);
-      yield { bookmarks };
-
-      index += 1;
-      const nextUrl = new URL(page.url());
-      nextUrl.searchParams.set("p", index.toString());
-      await page.goto(nextUrl.toString());
+      this._logger.log(
+        `${pageNum}th page. ${bookmarks.length} bookmarks found`
+      );
+    } finally {
+      await page.close();
     }
-
-    await page.close();
   }
 
-  private async _fetchBookmarks(page: Page): Promise<string[]> {
+  private async _findArtworkLinks(page: Page): Promise<string[]> {
     await page.waitForSelector("ul > li label a");
     const pathnames = await page.$$eval("ul > li label a", (elements) =>
       elements

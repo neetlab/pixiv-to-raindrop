@@ -1,20 +1,27 @@
+import { inject, injectable } from "inversify";
 import { Browser, Page } from "puppeteer";
 import { IConfig } from "../config/config";
 import { ILogger } from "../logger/logger";
 import { ICookieStorage } from "../storage/cookie-storage";
+import { TYPES } from "../types";
 
 const LOGIN_URL = "https://accounts.pixiv.net/login";
 
-export class LoginHandler {
+@injectable()
+export class LoginInterpreter {
   public constructor(
-    private readonly _browser: Browser,
+    @inject(TYPES.Config)
     private readonly _config: IConfig,
+
+    @inject(TYPES.CookieStorage)
     private readonly _storage: ICookieStorage,
+
+    @inject(TYPES.Logger)
     private readonly _logger: ILogger
   ) {}
 
-  async login(): Promise<void> {
-    const page = await this._browser.newPage();
+  async login(browser: Browser): Promise<void> {
+    const page = await browser.newPage();
 
     try {
       await this._restore(page);

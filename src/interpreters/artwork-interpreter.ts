@@ -11,10 +11,8 @@ export interface Artwork {
  * 個別ページのパーサー
  */
 export class ArtworkInterpreter {
-  public constructor(private readonly _browser: Browser) {}
-
-  public async interpret(url: string): Promise<Artwork> {
-    const page = await this._browser.newPage();
+  public async fetchArtwork(browser: Browser, url: string): Promise<Artwork> {
+    const page = await browser.newPage();
 
     try {
       await page.goto(url);

@@ -1,8 +1,10 @@
+import { injectable } from "inversify";
 import fs from "node:fs/promises";
 import { Protocol } from "puppeteer";
 
 import { ICookieStorage } from "./cookie-storage";
 
+@injectable()
 export class CookieStorageFs implements ICookieStorage {
   async read(): Promise<Protocol.Network.CookieParam[]> {
     try {

@@ -1,4 +1,7 @@
 import axios, { AxiosInstance } from "axios";
+import { inject, injectable } from "inversify";
+import { IConfig } from "../config/config";
+import { TYPES } from "../types";
 
 export interface IRaindropClient {
   get<T>(path: string, query?: unknown, init?: unknown): Promise<T>;
@@ -6,14 +9,18 @@ export interface IRaindropClient {
   put<T>(path: string, body?: unknown, init?: unknown): Promise<T>;
 }
 
+@injectable()
 export class RaindropClient implements IRaindropClient {
   private readonly _axios: AxiosInstance;
 
-  public constructor(token: string) {
+  public constructor(
+    @inject(TYPES.Config)
+    config: IConfig
+  ) {
     this._axios = axios.create({
       baseURL: "https://api.raindrop.io",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${config.raindrop.token}`,
       },
     });
   }
