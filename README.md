@@ -1,11 +1,11 @@
 # pixiv-to-raindrop
 
-Automate mirroring from your [Pixiv](https://pixiv.net) bookmarks to [Raindrop.io](https://raindrop.io)
+A lambda function that automatically mirrors bookmarks from [Pixiv](https://pixiv.net) to [Raindrop.io](https://raindrop.io)
 
 ## Usage
 
 ```
-curl -g <URL>/synchronize
+curl -g <URL>
 ```
 
 ## Configuration
