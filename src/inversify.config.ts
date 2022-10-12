@@ -3,6 +3,7 @@ import { IConfig } from "./services/config/config";
 import { ConfigEnv } from "./services/config/config-env";
 import { ILogger } from "./services/logger/logger";
 import { LoggerConsole } from "./services/logger/logger-console";
+import { LoggerGcp } from "./services/logger/logger-gcp";
 import { ICookieStorage } from "./services/storage/cookie-storage";
 import { CookieStorageFs } from "./services/storage/cookie-storage-fs";
 import { CookieStorageGcp } from "./services/storage/cookie-storage-gcp";
@@ -35,6 +36,11 @@ export const getContainer = async (): Promise<Container> => {
     .bind<ILogger>(TYPES.Logger)
     .to(LoggerConsole)
     .when(() => config.logger.type === "stdout");
+
+  container
+    .bind<ILogger>(TYPES.Logger)
+    .to(LoggerGcp)
+    .when(() => config.logger.type === "cloud-logging");
 
   return container;
 };

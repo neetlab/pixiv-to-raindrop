@@ -17,7 +17,7 @@ export interface IConfigCookieStorage {
   bucket: string;
 }
 
-export type LoggerType = "stdout";
+export type LoggerType = "stdout" | "cloud-logging";
 
 export interface IConfigLogger {
   type: LoggerType;
